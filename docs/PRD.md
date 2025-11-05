@@ -148,20 +148,44 @@ Supporting modules:
 
 ## 9. Technical Requirements
 
-### Data Sources
-- Public and third-party APIs for weather and transportation.
-- Internal backend to aggregate resort-specific data.
-- Cloud-hosted image and text storage for community posts.
+## Technical Architecture
 
-### Platform Requirements
-- Native or cross-platform (e.g., React Native or Flutter).  
-- Push notifications (Firebase or APNs).  
-- Cloud-hosted database (e.g., AWS DynamoDB or Firestore).  
+### Frontend (Client)
+- **React + Vite + TypeScript** (PWA, mobile-first design)
+- **TailwindCSS** + **shadcn/ui** components (Radix primitives: accessible + customizable)
+- **React Router** for navigation
+- Deployed via **AWS Amplify**
 
-### Security
-- User authentication (OAuth or social login).  
-- Moderation queue for user reports.  
-- Encrypted storage of user messages.
+### Backend (API Layer)
+- **Express.js REST API (Node.js)**
+  - Serves as the single gateway for all data operations
+  - Handles authentication, validation, and routing
+  - Organizes CRUD endpoints by feature area
+  - Middleware for logging, error handling, and request validation
+- **Rule:** All CRUD operations go through the API — the frontend must **not** call Supabase DB directly.
+
+### Database & Authentication
+- **Supabase (Postgres-based)** for:
+  - Data persistence
+  - Authentication (OTP email code; role-based access)
+  - Realtime subscriptions (optional for v1)
+- The API connects to Supabase via the Supabase client or `pg` driver.
+- **Authentication approach:**
+  - Frontend may call Supabase Auth (OTP email code) directly to obtain a session/JWT.
+  - API also exposes OTP wrappers (`/auth/otp/start`, `/auth/otp/verify`) for future clients and policy controls.
+  - All protected API routes require `Authorization: Bearer <JWT>`.
+
+### Deployment Strategy
+- **Frontend:** AWS Amplify (continuous deployment from GitHub)
+- **API Layer:** Serverless functions
+  - **AWS Lambda (preferred)** — Express wrapped with `serverless-http`
+- **Database:** Managed directly in the Supabase cloud instance
+
+### Development Tools
+- **GitHub** for version control and collaboration
+- **Windsurf IDE** for coding environment
+- **Trello** for task management
+- **Slack** for team communication
 
 ---
 
