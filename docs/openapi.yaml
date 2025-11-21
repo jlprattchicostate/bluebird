@@ -1,0 +1,771 @@
+openapi: 3.0.3
+info:
+  title: Bluebird API
+  version: "1.0.0"
+  description: >
+    REST API for the Bluebird (Doha Project) app. The client NEVER connects to
+    the database directly; all access flows through this API. Entities mirror the
+    database schema: profiles, resorts, weather reports, road reports, posts,
+    favorites, notifications, and verifications.
+
+servers:
+  - url: https://api.example.com/v1
+
+tags:
+  - name: Profiles
+  - name: Resorts
+  - name: Weather Reports
+  - name: Road Reports
+  - name: Posts
+  - name: Favorites
+  - name: Notifications
+  - name: Verifications
+
+security:
+  - bearerAuth: []
+
+paths:
+  /profiles:
+    get:
+      tags: [Profiles]
+      summary: List profiles
+      parameters:
+        - in: query
+          name: user_id
+          schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: Profiles page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProfiles'
+    post:
+      tags: [Profiles]
+      summary: Create profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProfileCreate' }
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Profile' }
+
+  /profiles/{profile_id}:
+    parameters:
+      - $ref: '#/components/parameters/profile_id'
+    get:
+      tags: [Profiles]
+      summary: Get profile
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Profile' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Profiles]
+      summary: Update profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProfileUpdate' }
+      responses:
+        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/Profile' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Profiles]
+      summary: Delete profile
+      responses:
+        '204': { description: Deleted }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /resorts:
+    get:
+      tags: [Resorts]
+      summary: List resorts
+      parameters:
+        - in: query
+          name: name
+          description: Case-insensitive search substring
+          schema: { type: string }
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: Resorts page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginatedResorts' }
+    post:
+      tags: [Resorts]
+      summary: Create resort
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ResortCreate' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Resort' }
+
+  /resorts/{resort_id}:
+    parameters:
+      - $ref: '#/components/parameters/resort_id'
+    get:
+      tags: [Resorts]
+      summary: Get resort
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Resort' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Resorts]
+      summary: Update resort
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ResortUpdate' }
+      responses:
+        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/Resort' } } } }
+    delete:
+      tags: [Resorts]
+      summary: Delete resort
+      description: >
+        Cascades to weather_reports, road_reports, favorites; sets posts.resort_id = null.
+      responses:
+        '204': { description: Deleted }
+
+  /weather-reports:
+    get:
+      tags: [Weather Reports]
+      summary: List weather reports
+      parameters:
+        - in: query
+          name: resort_id
+          schema: { type: string, format: uuid }
+        - in: query
+          name: since
+          description: Return reports with report_time >= since
+          schema: { type: string, format: date-time }
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedWeatherReports' } } } }
+    post:
+      tags: [Weather Reports]
+      summary: Create weather report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/WeatherReportCreate' }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/WeatherReport' } } } }
+
+  /weather-reports/{weather_id}:
+    parameters:
+      - $ref: '#/components/parameters/weather_id'
+    get:
+      tags: [Weather Reports]
+      summary: Get weather report
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/WeatherReport' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Weather Reports]
+      summary: Update weather report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/WeatherReportUpdate' }
+      responses:
+        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/WeatherReport' } } } }
+    delete:
+      tags: [Weather Reports]
+      summary: Delete weather report
+      responses:
+        '204': { description: Deleted }
+
+  /road-reports:
+    get:
+      tags: [Road Reports]
+      summary: List road reports
+      parameters:
+        - in: query
+          name: resort_id
+          schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedRoadReports' } } } }
+    post:
+      tags: [Road Reports]
+      summary: Create road report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RoadReportCreate' }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/RoadReport' } } } }
+
+  /road-reports/{road_id}:
+    parameters:
+      - $ref: '#/components/parameters/road_id'
+    get:
+      tags: [Road Reports]
+      summary: Get road report
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/RoadReport' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Road Reports]
+      summary: Update road report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RoadReportUpdate' }
+      responses:
+        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/RoadReport' } } } }
+    delete:
+      tags: [Road Reports]
+      summary: Delete road report
+      responses:
+        '204': { description: Deleted }
+
+  /posts:
+    get:
+      tags: [Posts]
+      summary: List posts
+      parameters:
+        - in: query
+          name: user_id
+          schema: { type: string, format: uuid }
+        - in: query
+          name: resort_id
+          schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedPosts' } } } }
+    post:
+      tags: [Posts]
+      summary: Create post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PostCreate' }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Post' } } } }
+
+  /posts/{post_id}:
+    parameters:
+      - $ref: '#/components/parameters/post_id'
+    get:
+      tags: [Posts]
+      summary: Get post
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Post' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Posts]
+      summary: Update post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PostUpdate' }
+      responses:
+        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/Post' } } } }
+    delete:
+      tags: [Posts]
+      summary: Delete post
+      responses:
+        '204': { description: Deleted }
+
+  /favorites:
+    get:
+      tags: [Favorites]
+      summary: List favorites
+      parameters:
+        - in: query
+          name: user_id
+          schema: { type: string, format: uuid }
+        - in: query
+          name: resort_id
+          schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedFavorites' } } } }
+    post:
+      tags: [Favorites]
+      summary: Create favorite (user-resort pair)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FavoriteCreate' }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Favorite' } } } }
+
+  /favorites/{favorite_id}:
+    parameters:
+      - $ref: '#/components/parameters/favorite_id'
+    delete:
+      tags: [Favorites]
+      summary: Delete favorite
+      responses:
+        '204': { description: Deleted }
+    get:
+      tags: [Favorites]
+      summary: Get favorite
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Favorite' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: List notifications
+      parameters:
+        - in: query
+          name: user_id
+          schema: { type: string, format: uuid }
+        - in: query
+          name: read
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedNotifications' } } } }
+    post:
+      tags: [Notifications]
+      summary: Create notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NotificationCreate' }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Notification' } } } }
+
+  /notifications/{notification_id}:
+    parameters:
+      - $ref: '#/components/parameters/notification_id'
+    patch:
+      tags: [Notifications]
+      summary: Update notification (e.g., mark read)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NotificationUpdate' }
+      responses:
+        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/Notification' } } } }
+    get:
+      tags: [Notifications]
+      summary: Get notification
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Notification' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Notifications]
+      summary: Delete notification
+      responses:
+        '204': { description: Deleted }
+
+  /verifications:
+    get:
+      tags: [Verifications]
+      summary: List verifications
+      parameters:
+        - in: query
+          name: user_id
+          schema: { type: string, format: uuid }
+        - in: query
+          name: status
+          schema: { type: string, enum: [pending, approved, rejected] }
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedVerifications' } } } }
+    post:
+      tags: [Verifications]
+      summary: Create verification (defaults to pending)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VerificationCreate' }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Verification' } } } }
+
+  /verifications/{verification_id}:
+    parameters:
+      - $ref: '#/components/parameters/verification_id'
+    get:
+      tags: [Verifications]
+      summary: Get verification
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Verification' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Verifications]
+      summary: Update verification status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VerificationUpdate' }
+      responses:
+        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/Verification' } } } }
+    delete:
+      tags: [Verifications]
+      summary: Delete verification
+      responses:
+        '204': { description: Deleted }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    limit:
+      in: query
+      name: limit
+      schema: { type: integer, minimum: 1, maximum: 200, default: 25 }
+    offset:
+      in: query
+      name: offset
+      schema: { type: integer, minimum: 0, default: 0 }
+    profile_id:     { in: path, name: profile_id, required: true, schema: { type: string, format: uuid } }
+    resort_id:      { in: path, name: resort_id,  required: true, schema: { type: string, format: uuid } }
+    weather_id:     { in: path, name: weather_id, required: true, schema: { type: string, format: uuid } }
+    road_id:        { in: path, name: road_id,    required: true, schema: { type: string, format: uuid } }
+    post_id:        { in: path, name: post_id,    required: true, schema: { type: string, format: uuid } }
+    favorite_id:    { in: path, name: favorite_id,required: true, schema: { type: string, format: uuid } }
+    notification_id:{ in: path, name: notification_id, required: true, schema: { type: string, format: uuid } }
+    verification_id:{ in: path, name: verification_id, required: true, schema: { type: string, format: uuid } }
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  schemas:
+    # ---- Common ----
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        details: { type: string }
+      required: [error]
+
+    PageMeta:
+      type: object
+      properties:
+        limit: { type: integer }
+        offset: { type: integer }
+        count: { type: integer, description: "Items in this page" }
+        total: { type: integer, description: "Total items available" }
+
+    # ---- Profiles ----
+    Profile:
+      type: object
+      properties:
+        profile_id:      { type: string, format: uuid }
+        user_id:         { type: string, format: uuid, description: "FK to auth.users(id)" }
+        name:            { type: string, nullable: true }
+        experience_level:{ type: string, nullable: true, enum: [beginner, intermediate, expert] }
+        bio:             { type: string, nullable: true }
+        created_at:      { type: string, format: date-time }
+        updated_at:      { type: string, format: date-time }
+      required: [profile_id, user_id, created_at, updated_at]
+
+    ProfileCreate:
+      type: object
+      required: [user_id]
+      properties:
+        user_id:         { type: string, format: uuid }
+        name:            { type: string }
+        experience_level:{ type: string, enum: [beginner, intermediate, expert] }
+        bio:             { type: string }
+
+    ProfileUpdate:
+      type: object
+      properties:
+        name:            { type: string, nullable: true }
+        experience_level:{ type: string, nullable: true, enum: [beginner, intermediate, expert] }
+        bio:             { type: string, nullable: true }
+
+    PaginatedProfiles:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Profile' }
+        meta: { $ref: '#/components/schemas/PageMeta' }
+
+    # ---- Resorts ----
+    Resort:
+      type: object
+      properties:
+        resort_id:  { type: string, format: uuid }
+        name:       { type: string }
+        location:   { type: string, nullable: true }
+        description:{ type: string, nullable: true }
+        has_parking:{ type: boolean }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+      required: [resort_id, name, has_parking, created_at, updated_at]
+
+    ResortCreate:
+      type: object
+      required: [name]
+      properties:
+        name:       { type: string }
+        location:   { type: string }
+        description:{ type: string }
+        has_parking:{ type: boolean, default: false }
+
+    ResortUpdate:
+      type: object
+      properties:
+        name:       { type: string }
+        location:   { type: string }
+        description:{ type: string }
+        has_parking:{ type: boolean }
+
+    PaginatedResorts:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Resort' }
+        meta: { $ref: '#/components/schemas/PageMeta' }
+
+    # ---- Weather Reports ----
+    WeatherReport:
+      type: object
+      properties:
+        weather_id:  { type: string, format: uuid }
+        resort_id:   { type: string, format: uuid }
+        snowfall:    { type: number, nullable: true }
+        temperature: { type: number, nullable: true }
+        wind_speed:  { type: number, nullable: true }
+        report_time: { type: string, format: date-time }
+        created_at:  { type: string, format: date-time }
+      required: [weather_id, resort_id, report_time, created_at]
+
+    WeatherReportCreate:
+      type: object
+      required: [resort_id]
+      properties:
+        resort_id:   { type: string, format: uuid }
+        snowfall:    { type: number }
+        temperature: { type: number }
+        wind_speed:  { type: number }
+        report_time: { type: string, format: date-time }
+
+    WeatherReportUpdate:
+      type: object
+      properties:
+        snowfall:    { type: number, nullable: true }
+        temperature: { type: number, nullable: true }
+        wind_speed:  { type: number, nullable: true }
+        report_time: { type: string, format: date-time, nullable: true }
+
+    PaginatedWeatherReports:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/WeatherReport' }
+        meta: { $ref: '#/components/schemas/PageMeta' }
+
+    # ---- Road Reports ----
+    RoadReport:
+      type: object
+      properties:
+        road_id:    { type: string, format: uuid }
+        resort_id:  { type: string, format: uuid }
+        road_status:{ type: string, nullable: true, description: "e.g., clear, icy, closed" }
+        visibility: { type: string, nullable: true, description: "e.g., good, limited, poor" }
+        updated_at: { type: string, format: date-time }
+        created_at: { type: string, format: date-time }
+      required: [road_id, resort_id, created_at, updated_at]
+
+    RoadReportCreate:
+      type: object
+      required: [resort_id]
+      properties:
+        resort_id:  { type: string, format: uuid }
+        road_status:{ type: string }
+        visibility: { type: string }
+
+    RoadReportUpdate:
+      type: object
+      properties:
+        road_status:{ type: string, nullable: true }
+        visibility: { type: string, nullable: true }
+
+    PaginatedRoadReports:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/RoadReport' }
+        meta: { $ref: '#/components/schemas/PageMeta' }
+
+    # ---- Posts ----
+    Post:
+      type: object
+      properties:
+        post_id:    { type: string, format: uuid }
+        user_id:    { type: string, format: uuid }
+        resort_id:  { type: string, format: uuid, nullable: true }
+        caption:    { type: string, nullable: true }
+        vibe_tag:   { type: string, nullable: true }
+        photo_url:  { type: string, nullable: true, format: uri }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+      required: [post_id, user_id, created_at, updated_at]
+
+    PostCreate:
+      type: object
+      required: [user_id]
+      properties:
+        user_id:   { type: string, format: uuid }
+        resort_id: { type: string, format: uuid, nullable: true }
+        caption:   { type: string }
+        vibe_tag:  { type: string }
+        photo_url: { type: string, format: uri }
+
+    PostUpdate:
+      type: object
+      properties:
+        resort_id: { type: string, format: uuid, nullable: true }
+        caption:   { type: string, nullable: true }
+        vibe_tag:  { type: string, nullable: true }
+        photo_url: { type: string, format: uri, nullable: true }
+
+    PaginatedPosts:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Post' }
+        meta: { $ref: '#/components/schemas/PageMeta' }
+
+    # ---- Favorites ----
+    Favorite:
+      type: object
+      properties:
+        favorite_id: { type: string, format: uuid }
+        user_id:     { type: string, format: uuid }
+        resort_id:   { type: string, format: uuid }
+        favorited_at:{ type: string, format: date-time }
+      required: [favorite_id, user_id, resort_id, favorited_at]
+
+    FavoriteCreate:
+      type: object
+      required: [user_id, resort_id]
+      properties:
+        user_id:   { type: string, format: uuid }
+        resort_id: { type: string, format: uuid }
+
+    PaginatedFavorites:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Favorite' }
+        meta: { $ref: '#/components/schemas/PageMeta' }
+
+    # ---- Notifications ----
+    Notification:
+      type: object
+      properties:
+        notification_id: { type: string, format: uuid }
+        user_id:         { type: string, format: uuid }
+        type:            { type: string }
+        message:         { type: string }
+        sent_at:         { type: string, format: date-time }
+        read:            { type: boolean }
+      required: [notification_id, user_id, type, message, sent_at, read]
+
+    NotificationCreate:
+      type: object
+      required: [user_id, type, message]
+      properties:
+        user_id: { type: string, format: uuid }
+        type:    { type: string, description: "e.g., message, system, alert" }
+        message: { type: string }
+        sent_at: { type: string, format: date-time, description: "Defaults to now if omitted" }
+
+    NotificationUpdate:
+      type: object
+      properties:
+        type:    { type: string, nullable: true }
+        message: { type: string, nullable: true }
+        read:    { type: boolean, nullable: true }
+
+    PaginatedNotifications:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Notification' }
+        meta: { $ref: '#/components/schemas/PageMeta' }
+
+    # ---- Verifications ----
+    Verification:
+      type: object
+      properties:
+        verification_id: { type: string, format: uuid }
+        user_id:         { type: string, format: uuid }
+        status:          { type: string, enum: [pending, approved, rejected] }
+        reviewed_at:     { type: string, format: date-time, nullable: true }
+        created_at:      { type: string, format: date-time }
+      required: [verification_id, user_id, status, created_at]
+
+    VerificationCreate:
+      type: object
+      required: [user_id]
+      properties:
+        user_id: { type: string, format: uuid }
+        status:  { type: string, enum: [pending, approved, rejected], description: "Defaults to pending if omitted" }
+
+    VerificationUpdate:
+      type: object
+      properties:
+        status:      { type: string, enum: [pending, approved, rejected] }
+        reviewed_at: { type: string, format: date-time }
+
+    PaginatedVerifications:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Verification' }
+        meta: { $ref: '#/components/schemas/PageMeta' }
