@@ -1,0 +1,170 @@
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  background: #f7f9fb;
+}
+
+.site-nav {
+  width: 280px;
+  padding: 2rem 1.5rem;
+  border-right: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.brand-kicker {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.brand-tagline {
+  margin: 0.2rem 0 0;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.site-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.nav-link {
+  display: block;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-link:hover {
+  background: #e2e8f0;
+}
+
+.nav-link.active {
+  background: #0f62fe;
+  color: #ffffff;
+}
+
+.content-area {
+  flex: 1;
+  padding: 2.5rem 3rem;
+}
+
+.page {
+  max-width: 1100px;
+}
+
+.page-header {
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: #64748b;
+  margin: 0;
+}
+
+.page-header h1 {
+  margin: 0.35rem 0 0.75rem;
+  font-size: 2rem;
+  color: #0f172a;
+}
+
+.page-intro {
+  margin: 0;
+  color: #475569;
+  font-size: 1rem;
+}
+
+.sub-nav {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.sub-nav a {
+  font-size: 0.9rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.panel {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.panel:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.panel h2 {
+  margin-bottom: 0.35rem;
+  color: #0f172a;
+}
+
+.panel p {
+  margin-top: 0;
+  color: #475569;
+}
+
+.placeholder-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.placeholder-grid article,
+.placeholder-feed article {
+  border: 1px dashed #94a3b8;
+  border-radius: 0.85rem;
+  padding: 1rem;
+  background: #fff;
+}
+
+.placeholder-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+ol,
+ul {
+  padding-left: 1.25rem;
+  color: #0f172a;
+}
+
+@media (max-width: 960px) {
+  .app-shell {
+    flex-direction: column;
+  }
+
+  .site-nav {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+    flex-direction: column;
+  }
+}
