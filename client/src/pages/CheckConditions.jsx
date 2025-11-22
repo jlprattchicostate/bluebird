@@ -4,17 +4,12 @@ const CheckConditions = () => (
       <p className="eyebrow">Feature · Check Conditions</p>
       <h1 id="check-conditions-title">Check Conditions</h1>
       <p className="page-intro">
-        Resort-specific dashboards showing snow totals, lift status, visibility, and user-favorite
+        Resort-specific dashboards showing snow totals, lift status, visibility, and favorite
         shortcuts for rapid decisions.
       </p>
-      <nav className="sub-nav" aria-label="Check Conditions sections">
-        <a href="#resort-directory">Resort Directory</a>
-        <a href="#live-metrics">Live Metrics</a>
-        <a href="#favorites">Favorite Resorts</a>
-      </nav>
     </header>
 
-    <section className="panel" id="resort-directory">
+    <section className="panel">
       <h2>Resort Directory</h2>
       <p>Placeholder for searchable list of supported resorts plus state filters.</p>
       <div className="placeholder-grid">
@@ -33,7 +28,7 @@ const CheckConditions = () => (
       </div>
     </section>
 
-    <section className="panel" id="live-metrics">
+    <section className="panel">
       <h2>Live Metrics</h2>
       <p>Section for snow depth charts, hourly temps, and camera snapshots.</p>
       <ul>
@@ -43,7 +38,7 @@ const CheckConditions = () => (
       </ul>
     </section>
 
-    <section className="panel" id="favorites">
+    <section className="panel">
       <h2>Favorite Resorts</h2>
       <p>Personalized quick access rail.</p>
       <ol>

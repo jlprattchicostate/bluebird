@@ -3,6 +3,10 @@ node_modules/
 
 # Environment variables
 .env
+api/.env
+client/.env
+client/.env.local
+client/.env.*.local
 
 # OS files
 .DS_Store

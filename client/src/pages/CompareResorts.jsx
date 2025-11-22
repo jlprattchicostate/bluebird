@@ -7,14 +7,9 @@ const CompareResorts = () => (
         Side-by-side comparisons across snow totals, crowd levels, parking, and travel times so
         riders can pick the best hill today.
       </p>
-      <nav className="sub-nav" aria-label="Comparison sections">
-        <a href="#selector">Selector</a>
-        <a href="#comparison-grid">Comparison Grid</a>
-        <a href="#insights">Insights</a>
-      </nav>
     </header>
 
-    <section className="panel" id="selector">
+    <section className="panel">
       <h2>Resort Selector</h2>
       <p>Controls for choosing up to three resorts to compare.</p>
       <ul>
@@ -24,10 +19,10 @@ const CompareResorts = () => (
       </ul>
     </section>
 
-    <section className="panel" id="comparison-grid">
+    <section className="panel">
       <h2>Comparison Grid</h2>
       <p>Matrix for key metrics.</p>
-      <div className="placeholder-grid three-up">
+      <div className="placeholder-grid">
         <article>
           <h3>Snow &amp; Weather</h3>
           <p>24h snowfall, base depth, wind placeholder.</p>
@@ -43,7 +38,7 @@ const CompareResorts = () => (
       </div>
     </section>
 
-    <section className="panel" id="insights">
+    <section className="panel">
       <h2>Insights &amp; Recommendations</h2>
       <p>Rules engine output for “Best Powder” / “Fastest Laps” recommendations.</p>
       <ol>

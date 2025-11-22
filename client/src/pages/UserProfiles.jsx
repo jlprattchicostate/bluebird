@@ -1,58 +1,61 @@
-const UserProfiles = () => (
-  <main className="page" aria-labelledby="user-profiles-title">
-    <header className="page-header">
-      <p className="eyebrow">Feature · User Profiles</p>
-      <h1 id="user-profiles-title">User Profiles</h1>
-      <p className="page-intro">
-        Profiles showcase rider bio, experience level, favorite resorts, and social graph to power
-        following + personalization.
-      </p>
-      <nav className="sub-nav" aria-label="Profile sections">
-        <a href="#identity">Identity</a>
-        <a href="#favorites">Favorite Resorts</a>
-        <a href="#connections">Connections</a>
-      </nav>
-    </header>
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
-    <section className="panel" id="identity">
-      <h2>Profile Identity</h2>
-      <p>Editable card with avatar, name, and riding bio.</p>
-      <div className="placeholder-grid">
-        <article>
-          <h3>Profile Header</h3>
-          <p>Avatar upload, pronouns, mountain region placeholder.</p>
-        </article>
-        <article>
-          <h3>Experience Level</h3>
-          <p>Beginner/intermediate/expert selector placeholder.</p>
-        </article>
-        <article>
-          <h3>Settings Link</h3>
-          <p>Edit profile CTA placeholder.</p>
-        </article>
-      </div>
-    </section>
+const UserProfiles = () => {
+  const { user } = useAuth()
 
-    <section className="panel" id="favorites">
-      <h2>Favorite Resorts</h2>
-      <p>List of pinned resorts reused across dashboard &amp; compare flows.</p>
-      <ul>
-        <li>Favorite chips placeholder</li>
-        <li>Reorder drag handle placeholder</li>
-        <li>Sync with Check Conditions placeholder</li>
-      </ul>
-    </section>
+  return (
+    <main className="page" aria-labelledby="user-profiles-title">
+      <header className="page-header">
+        <p className="eyebrow">Feature · User Profiles</p>
+        <h1 id="user-profiles-title">User Profiles</h1>
+        <p className="page-intro">
+          Central place for riders to manage bios, experience levels, and favorite resorts that
+          drive personalization across Bluebird.
+        </p>
+        {!user && (
+          <div className="cta-card">
+            <p>Create or access your profile after signing in.</p>
+            <Link to="/login">Go to login</Link>
+          </div>
+        )}
+      </header>
 
-    <section className="panel" id="connections">
-      <h2>Connections &amp; Followers</h2>
-      <p>Follow/unfollow interactions plus stats.</p>
-      <ol>
-        <li>Followers/Following counters placeholder</li>
-        <li>Recent activity feed placeholder</li>
-        <li>Privacy controls placeholder</li>
-      </ol>
-    </section>
-  </main>
-)
+      <section className="panel">
+        <h2>Profile Identity</h2>
+        <p>Placeholder cards for avatar, pronouns, and riding bio.</p>
+        <div className="placeholder-grid">
+          <article>
+            <h3>Avatar &amp; Bio</h3>
+            <p>{user ? 'Show edit form' : 'Visible once authenticated.'}</p>
+          </article>
+          <article>
+            <h3>Experience Meter</h3>
+            <p>Skill slider + terrain preferences placeholder.</p>
+          </article>
+          <article>
+            <h3>Settings Actions</h3>
+            <p>Buttons for editing notifications and privacy.</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="panel">
+        <h2>Favorite Resorts</h2>
+        <p>Persisted list powering dashboard shortcuts and compare flow.</p>
+        <div className="placeholder-grid">
+          <article>
+            <h3>Favorites Rail</h3>
+            <p>{user ? 'List pinned resorts + reorder affordance.' : 'Login to manage favorites.'}</p>
+          </article>
+          <article>
+            <h3>Sync Status</h3>
+            <p>Displays last sync with Supabase.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  )
+}
 
 export default UserProfiles

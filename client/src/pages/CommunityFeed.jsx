@@ -7,17 +7,12 @@ const CommunityFeed = () => (
         User-generated reports, photos, vibe checks, and moderation tooling to keep the community
         accurate and safe.
       </p>
-      <nav className="sub-nav" aria-label="Community sections">
-        <a href="#trending">Trending Posts</a>
-        <a href="#composer">Post Composer</a>
-        <a href="#moderation">Moderation</a>
-      </nav>
     </header>
 
-    <section className="panel" id="trending">
+    <section className="panel">
       <h2>Trending Posts</h2>
       <p>Scrollable stack of recent high-signal updates.</p>
-      <div className="placeholder-feed">
+      <div className="placeholder-grid">
         <article>
           <h3>Storm Stoke</h3>
           <p>Placeholder for photo, username, timestamp, and resort tag.</p>
@@ -33,7 +28,7 @@ const CommunityFeed = () => (
       </div>
     </section>
 
-    <section className="panel" id="composer">
+    <section className="panel">
       <h2>Post Composer</h2>
       <p>Interface for rich text, photo uploads, and resort tagging.</p>
       <ul>
@@ -43,7 +38,7 @@ const CommunityFeed = () => (
       </ul>
     </section>
 
-    <section className="panel" id="moderation">
+    <section className="panel">
       <h2>Moderation &amp; Reporting</h2>
       <p>Tooling to flag unsafe or misleading posts.</p>
       <ol>

@@ -7,14 +7,9 @@ const MessagesGroups = () => (
         Direct messages, group coordination, and carpool planning spaces powered by realtime
         delivery and notifications.
       </p>
-      <nav className="sub-nav" aria-label="Messaging sections">
-        <a href="#direct-messages">Direct Messages</a>
-        <a href="#group-chats">Group Chats</a>
-        <a href="#carpool">Carpool Coordination</a>
-      </nav>
     </header>
 
-    <section className="panel" id="direct-messages">
+    <section className="panel">
       <h2>Direct Messages</h2>
       <p>One-to-one chat threads with persistent history.</p>
       <div className="placeholder-grid">
@@ -33,7 +28,7 @@ const MessagesGroups = () => (
       </div>
     </section>
 
-    <section className="panel" id="group-chats">
+    <section className="panel">
       <h2>Group Chats</h2>
       <p>Create groups for squads riding together.</p>
       <ul>
@@ -43,7 +38,7 @@ const MessagesGroups = () => (
       </ul>
     </section>
 
-    <section className="panel" id="carpool">
+    <section className="panel">
       <h2>Carpool Coordination</h2>
       <p>Logistics add-ons for carpool &amp; meetup planning.</p>
       <ol>

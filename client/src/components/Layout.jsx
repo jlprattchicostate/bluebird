@@ -1,44 +1,73 @@
 import { NavLink, Outlet } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
-const navLinks = [
-  { to: '/', label: 'Home Dashboard', end: true },
-  { to: '/weather', label: 'Weather & Road' },
-  { to: '/conditions', label: 'Check Conditions' },
-  { to: '/community', label: 'Community Feed' },
-  { to: '/compare', label: 'Compare Resorts' },
-  { to: '/profiles', label: 'User Profiles' },
-  { to: '/messages', label: 'Messages' },
-]
+const Layout = () => {
+  const { user, signOut, isAuthReady } = useAuth()
 
-const Layout = () => (
-  <div className="app-shell">
-    <aside className="site-nav">
-      <div className="brand">
-        <p className="brand-kicker">Bluebird</p>
-        <p className="brand-tagline">Live snow, road, and community intel.</p>
-      </div>
+  return (
+    <div className="app-shell">
+      <aside className="site-nav">
+        <div className="brand-block">
+          <p className="brand">Bluebird</p>
+          <span className="tagline">Snow · Road · Community</span>
+        </div>
 
-      <nav aria-label="Primary">
-        <ul>
-          {navLinks.map(({ to, label, end }) => (
-            <li key={to}>
-              <NavLink
-                to={to}
-                end={end}
-                className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              >
-                {label}
+        <nav aria-label="Primary">
+          <ul>
+            <li>
+              <NavLink to="/" end>
+                Home Dashboard
               </NavLink>
             </li>
-          ))}
-        </ul>
-      </nav>
-    </aside>
+            <li>
+              <NavLink to="/weather">Weather &amp; Road</NavLink>
+            </li>
+            <li>
+              <NavLink to="/conditions">Check Conditions</NavLink>
+            </li>
+            <li>
+              <NavLink to="/community">Community Feed</NavLink>
+            </li>
+            <li>
+              <NavLink to="/compare">Compare Resorts</NavLink>
+            </li>
+            <li>
+              <NavLink to="/messages">Messages</NavLink>
+            </li>
+            <li>
+              <NavLink to="/profiles">User Profiles</NavLink>
+            </li>
+            {!user && (
+              <li>
+                <NavLink to="/login">Login</NavLink>
+              </li>
+            )}
+          </ul>
+        </nav>
 
-    <div className="content-area">
-      <Outlet />
+        <div className="auth-summary">
+          {isAuthReady ? (
+            user ? (
+              <>
+                <p className="welcome">Signed in as {user.email}</p>
+                <button type="button" onClick={signOut}>
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <p className="welcome">You are not signed in.</p>
+            )
+          ) : (
+            <p className="welcome">Checking session…</p>
+          )}
+        </div>
+      </aside>
+
+      <div className="content-area">
+        <Outlet />
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 export default Layout
