@@ -41,7 +41,6 @@ const CompareResorts = () => {
               <ul>
                 <li>Parking: {resort.has_parking ? 'On-site' : 'Off-site only'}</li>
                 <li>Added: {new Date(resort.created_at).toLocaleDateString()}</li>
-                <li>ID: {resort.resort_id}</li>
               </ul>
             </article>
           ))}

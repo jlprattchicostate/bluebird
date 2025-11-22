@@ -1,7 +1,22 @@
+import { useMemo } from 'react'
 import useWeatherReports from '../hooks/useWeatherReports'
+import useResorts from '../hooks/useResorts'
 
 const WeatherRoadUpdates = () => {
   const { reports, isLoading, error } = useWeatherReports({ limit: 5 })
+  const {
+    resorts,
+    isLoading: resortsLoading,
+    error: resortsError,
+  } = useResorts({ limit: 50 })
+
+  const resortById = useMemo(() => {
+    const map = {}
+    resorts.forEach((resort) => {
+      map[resort.resort_id] = resort
+    })
+    return map
+  }, [resorts])
 
   return (
     <main className="page" aria-labelledby="weather-road-title">
@@ -18,13 +33,20 @@ const WeatherRoadUpdates = () => {
         <h2>Latest Weather Reports</h2>
         {isLoading && <p>Loading reports…</p>}
         {error && <p className="form-error">{error.message}</p>}
+        {resortsError && <p className="form-error">{resortsError.message}</p>}
         {!isLoading && !error && reports.length === 0 && <p>No reports available yet.</p>}
 
         <div className="placeholder-grid">
           {reports.map((report) => (
             <article key={report.weather_id}>
               <h3>{new Date(report.report_time).toLocaleString()}</h3>
-              <p>Resort: {report.resort_id}</p>
+              <p>
+                Resort: {resortById[report.resort_id]?.name ?? 'Unknown resort'}
+                {resortById[report.resort_id]?.location ? (
+                  <span> · {resortById[report.resort_id].location}</span>
+                ) : null}
+              </p>
+              {resortsLoading && !resortById[report.resort_id] && <p>Loading resort details…</p>}
               <ul>
                 <li>Snowfall: {report.snowfall ?? '—'} in</li>
                 <li>Temperature: {report.temperature ?? '—'}°F</li>

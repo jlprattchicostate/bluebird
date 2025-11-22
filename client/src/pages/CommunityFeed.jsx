@@ -1,7 +1,18 @@
+import { useMemo } from 'react'
 import usePosts from '../hooks/usePosts'
+import useResorts from '../hooks/useResorts'
 
 const CommunityFeed = () => {
   const { posts, isLoading, error } = usePosts({ limit: 9 })
+  const { resorts } = useResorts({ limit: 100 })
+
+  const resortById = useMemo(() => {
+    const map = {}
+    resorts.forEach((resort) => {
+      map[resort.resort_id] = resort
+    })
+    return map
+  }, [resorts])
 
   return (
     <main className="page" aria-labelledby="community-feed-title">
@@ -24,7 +35,12 @@ const CommunityFeed = () => {
           {posts.map((post) => (
             <article key={post.post_id}>
               <h3>{post.caption || 'Untitled update'}</h3>
-              <p>Resort ID: {post.resort_id ?? '—'}</p>
+              <p>
+                Resort: {resortById[post.resort_id]?.name ?? 'Unknown'}
+                {resortById[post.resort_id]?.location ? (
+                  <span> · {resortById[post.resort_id].location}</span>
+                ) : null}
+              </p>
               <p>Vibe: {post.vibe_tag ?? 'n/a'}</p>
               <p>{new Date(post.created_at).toLocaleString()}</p>
             </article>
