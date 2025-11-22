@@ -126,4 +126,22 @@ export async function getNotifications(params = {}) {
   return apiRequest(path)
 }
 
+export async function getRoadReports(params = {}) {
+  const queryString = appendSearchParams(params)
+  const path = queryString ? `/road-reports?${queryString}` : '/road-reports'
+  return apiRequest(path)
+}
+
+export async function getProfiles(params = {}) {
+  const queryString = appendSearchParams(params)
+  const path = queryString ? `/profiles?${queryString}` : '/profiles'
+  return apiRequest(path)
+}
+
+export async function getVerifications(params = {}) {
+  const queryString = appendSearchParams(params)
+  const path = queryString ? `/verifications?${queryString}` : '/verifications'
+  return apiRequest(path)
+}
+
 export { apiRequest }

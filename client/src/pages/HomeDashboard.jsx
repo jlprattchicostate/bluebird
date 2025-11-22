@@ -1,8 +1,46 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import useWeatherReports from '../hooks/useWeatherReports'
+import useResorts from '../hooks/useResorts'
+import useFavorites from '../hooks/useFavorites'
+import usePosts from '../hooks/usePosts'
+import useNotifications from '../hooks/useNotifications'
 
 const HomeDashboard = () => {
   const { user } = useAuth()
+  const { reports, isLoading: weatherLoading, error: weatherError } = useWeatherReports({ limit: 4 })
+  const { resorts } = useResorts({ limit: 50 })
+  const {
+    favorites,
+    isLoading: favLoading,
+    error: favError,
+  } = useFavorites(user ? { user_id: user.id, limit: 6 } : {})
+  const {
+    posts,
+    isLoading: postsLoading,
+    error: postsError,
+  } = usePosts({ limit: 4 })
+  const {
+    notifications,
+    isLoading: notificationsLoading,
+    error: notificationsError,
+  } = useNotifications({ limit: 4 })
+
+  const resortById = useMemo(() => {
+    const map = {}
+    resorts.forEach((resort) => {
+      map[resort.resort_id] = resort
+    })
+    return map
+  }, [resorts])
+
+  const favoriteResorts = (user ? favorites : []).map((fav) => resortById[fav.resort_id]).filter(Boolean)
+  const featuredResorts = favoriteResorts.length ? favoriteResorts : resorts.slice(0, 3)
+  const alertNotifications = notifications.filter((notification) =>
+    ['alert', 'system'].includes((notification.type || '').toLowerCase()),
+  )
+  const communityPosts = posts.slice(0, 3)
 
   return (
     <main className="page" aria-labelledby="home-dashboard-title">
@@ -22,44 +60,79 @@ const HomeDashboard = () => {
       </header>
 
       <section className="panel">
-        <h2>Daily Update Slots</h2>
-        <p>Placeholders for 6 AM and 6 PM scheduler-driven summary cards.</p>
+        <h2>Daily Conditions Digest</h2>
+        {weatherLoading && <p>Loading telemetry…</p>}
+        {weatherError && <p className="form-error">{weatherError.message}</p>}
+        {!weatherLoading && !weatherError && reports.length === 0 && <p>No weather reports yet.</p>}
         <div className="placeholder-grid">
+          {reports.slice(0, 2).map((report, index) => (
+            <article key={report.weather_id}>
+              <h3>{index === 0 ? 'Morning Snapshot' : 'Later Today'}</h3>
+              <p>
+                {resortById[report.resort_id]?.name ?? 'Unknown resort'} ·{' '}
+                {resortById[report.resort_id]?.location ?? 'Location coming soon'}
+              </p>
+              <ul>
+                <li>Snowfall: {report.snowfall ?? '—'} in</li>
+                <li>Temp: {report.temperature ?? '—'}°F</li>
+                <li>Wind: {report.wind_speed ?? '—'} mph</li>
+              </ul>
+              <p>Reported {new Date(report.report_time).toLocaleTimeString()}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel">
+        <h2>Resort Highlights</h2>
+        {favLoading && user && <p>Loading your favorites…</p>}
+        {favError && <p className="form-error">{favError.message}</p>}
+        <div className="placeholder-grid">
+          {featuredResorts.map((resort) => (
+            <article key={resort.resort_id}>
+              <h3>{resort.name}</h3>
+              <p>{resort.location || 'Location TBD'}</p>
+              <ul>
+                <li>{resort.has_parking ? 'On-site parking' : 'Limited parking'}</li>
+                <li>Added {new Date(resort.created_at).toLocaleDateString()}</li>
+              </ul>
+            </article>
+          ))}
           <article>
-            <h3>Morning Snapshot</h3>
+            <h3>Alert Banner</h3>
+            {notificationsLoading && <p>Checking alerts…</p>}
+            {notificationsError && <p className="form-error">{notificationsError.message}</p>}
+            {!notificationsLoading && alertNotifications.length === 0 && <p>No active alerts.</p>}
             <ul>
-              <li>Overnight snowfall</li>
-              <li>Road advisory rollup</li>
-              <li>Lift delay alerts</li>
-            </ul>
-          </article>
-          <article>
-            <h3>Evening Snapshot</h3>
-            <ul>
-              <li>Next-day storm outlook</li>
-              <li>Trail maintenance notices</li>
-              <li>Travel timing guidance</li>
+              {alertNotifications.map((notification) => (
+                <li key={notification.notification_id}>
+                  <strong>{notification.type}</strong>: {notification.message}
+                </li>
+              ))}
             </ul>
           </article>
         </div>
       </section>
 
       <section className="panel">
-        <h2>Resort Highlights</h2>
-        <p>Cards summarizing snow depth, trails open, and wait times per resort.</p>
+        <h2>Community Pulse</h2>
+        {postsLoading && <p>Loading community feed…</p>}
+        {postsError && <p className="form-error">{postsError.message}</p>}
+        {!postsLoading && !postsError && communityPosts.length === 0 && <p>No rider updates yet.</p>}
         <div className="placeholder-grid">
-          <article>
-            <h3>Flagship Resort</h3>
-            <p>Telemetry + trending vibe placeholder.</p>
-          </article>
-          <article>
-            <h3>Favorites Rail</h3>
-            <p>{user ? 'Your pinned resorts will render here.' : 'Favorites rail available after login.'}</p>
-          </article>
-          <article>
-            <h3>Alert Banner</h3>
-            <p>DOT closures, avalanche warnings, and push notification preview placeholder.</p>
-          </article>
+          {communityPosts.map((post) => (
+            <article key={post.post_id}>
+              <h3>{post.caption || 'Untitled update'}</h3>
+              <p>
+                Resort: {resortById[post.resort_id]?.name ?? 'Unknown'}
+                {resortById[post.resort_id]?.location ? (
+                  <span> · {resortById[post.resort_id].location}</span>
+                ) : null}
+              </p>
+              <p>Vibe: {post.vibe_tag ?? 'n/a'}</p>
+              <p>{new Date(post.created_at).toLocaleString()}</p>
+            </article>
+          ))}
         </div>
       </section>
     </main>

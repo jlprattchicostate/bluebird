@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import useWeatherReports from '../hooks/useWeatherReports'
 import useResorts from '../hooks/useResorts'
+import useRoadReports from '../hooks/useRoadReports'
+import useNotifications from '../hooks/useNotifications'
 
 const WeatherRoadUpdates = () => {
   const { reports, isLoading, error } = useWeatherReports({ limit: 5 })
@@ -9,6 +11,16 @@ const WeatherRoadUpdates = () => {
     isLoading: resortsLoading,
     error: resortsError,
   } = useResorts({ limit: 50 })
+  const {
+    roadReports,
+    isLoading: roadsLoading,
+    error: roadsError,
+  } = useRoadReports({ limit: 6 })
+  const {
+    notifications,
+    isLoading: alertsLoading,
+    error: alertsError,
+  } = useNotifications({ limit: 6 })
 
   const resortById = useMemo(() => {
     const map = {}
@@ -17,6 +29,10 @@ const WeatherRoadUpdates = () => {
     })
     return map
   }, [resorts])
+
+  const hazardAlerts = notifications.filter((notification) =>
+    ['alert', 'system'].includes((notification.type || '').toLowerCase()),
+  )
 
   return (
     <main className="page" aria-labelledby="weather-road-title">
@@ -58,12 +74,36 @@ const WeatherRoadUpdates = () => {
       </section>
 
       <section className="panel">
+        <h2>Road Status &amp; Visibility</h2>
+        {roadsLoading && <p>Loading road reports…</p>}
+        {roadsError && <p className="form-error">{roadsError.message}</p>}
+        {!roadsLoading && !roadsError && roadReports.length === 0 && <p>No road reports logged yet.</p>}
+        <div className="placeholder-grid">
+          {roadReports.map((road) => (
+            <article key={road.road_id}>
+              <h3>{resortById[road.resort_id]?.name ?? 'Unknown resort'}</h3>
+              <p>
+                Status: <strong>{road.road_status ?? 'n/a'}</strong>
+              </p>
+              <p>Visibility: {road.visibility ?? 'n/a'}</p>
+              <p>Updated {new Date(road.updated_at).toLocaleTimeString()}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel">
         <h2>Alerts &amp; Notifications</h2>
-        <p>Hooks for push notifications and dashboard banners.</p>
+        {alertsLoading && <p>Loading alerts…</p>}
+        {alertsError && <p className="form-error">{alertsError.message}</p>}
+        {!alertsLoading && hazardAlerts.length === 0 && <p>No active system alerts.</p>}
         <ul>
-          <li>New hazard alert placeholder</li>
-          <li>Closure escalation placeholder</li>
-          <li>Auto-dismiss timer placeholder</li>
+          {hazardAlerts.map((notification) => (
+            <li key={notification.notification_id}>
+              <strong>{notification.type}</strong>: {notification.message}{' '}
+              <span>({new Date(notification.sent_at).toLocaleString()})</span>
+            </li>
+          ))}
         </ul>
       </section>
     </main>
