@@ -114,10 +114,6 @@ const UserProfiles = () => {
             <h3>Experience Meter</h3>
             <p>Skill slider + terrain preferences placeholder.</p>
           </article>
-          <article>
-            <h3>Settings Actions</h3>
-            <p>Buttons for editing notifications and privacy.</p>
-          </article>
         </div>
       </section>
 
@@ -128,10 +124,6 @@ const UserProfiles = () => {
           <article>
             <h3>Favorites Rail</h3>
             <p>{user ? 'List pinned resorts + reorder affordance.' : 'Login to manage favorites.'}</p>
-          </article>
-          <article>
-            <h3>Sync Status</h3>
-            <p>Displays last sync with Supabase.</p>
           </article>
         </div>
       </section>
