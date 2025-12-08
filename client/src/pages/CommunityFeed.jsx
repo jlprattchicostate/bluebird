@@ -6,6 +6,12 @@ const CommunityFeed = () => {
   const { posts, isLoading, error } = usePosts({ limit: 9 })
   const { resorts } = useResorts({ limit: 100 })
   const [likedPosts, setLikedPosts] = useState(new Set())
+  const [composer, setComposer] = useState({
+    title: '',
+    body: '',
+    attachments: [],
+  })
+  const [composerStatus, setComposerStatus] = useState('Draft not submitted')
 
   const resortById = useMemo(() => {
     const map = {}
@@ -26,6 +32,23 @@ const CommunityFeed = () => {
       return next
     })
   }, [])
+
+  const handleComposerInput = (field) => (event) => {
+    const { value } = event.target
+    setComposer((prev) => ({ ...prev, [field]: value }))
+    setComposerStatus('Draft not submitted')
+  }
+
+  const handleAttachmentChange = (event) => {
+    const files = Array.from(event.target.files ?? [])
+    setComposer((prev) => ({ ...prev, attachments: files }))
+    setComposerStatus('Draft not submitted')
+  }
+
+  const handleComposerSubmit = (event) => {
+    event.preventDefault()
+    setComposerStatus('Submission sync launching soon—stay tuned!')
+  }
 
   return (
     <main className="page" aria-labelledby="community-feed-title">
@@ -83,21 +106,53 @@ const CommunityFeed = () => {
       <section className="panel">
         <h2>Post Composer</h2>
         <p>Interface for rich text, photo uploads, and resort tagging (implementation forthcoming).</p>
-        <ul>
-          <li>Text area placeholder</li>
-          <li>Photo attachment placeholder</li>
-          <li>Submission confirmation placeholder</li>
-        </ul>
-      </section>
+        <form className="post-composer" onSubmit={handleComposerSubmit}>
+          <label>
+            <span>Post title</span>
+            <input
+              type="text"
+              name="title"
+              placeholder="e.g., Surprise blower day at Alpine"
+              value={composer.title}
+              onChange={handleComposerInput('title')}
+            />
+          </label>
 
-      <section className="panel">
-        <h2>Moderation &amp; Reporting</h2>
-        <p>Tooling to flag unsafe or misleading posts.</p>
-        <ol>
-          <li>Report button placeholder</li>
-          <li>Moderation queue placeholder</li>
-          <li>Escalation workflow placeholder</li>
-        </ol>
+          <label>
+            <span>Details</span>
+            <textarea
+              name="body"
+              rows={4}
+              placeholder="Share snow depth, vibe tags, or lift delays so others know what's up."
+              value={composer.body}
+              onChange={handleComposerInput('body')}
+            />
+          </label>
+
+          <label className="file-picker">
+            <span>Photo attachments</span>
+            <input type="file" multiple accept="image/*" onChange={handleAttachmentChange} />
+          </label>
+
+          <div className="attachment-preview">
+            {composer.attachments.length === 0 ? (
+              <p>No photos added yet.</p>
+            ) : (
+              <ul>
+                {composer.attachments.map((file) => (
+                  <li key={file.name}>{file.name}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="composer-actions">
+            <p className="composer-status">{composerStatus}</p>
+            <button type="submit" className="btn-primary" disabled>
+              Share update (coming soon)
+            </button>
+          </div>
+        </form>
       </section>
     </main>
   )
