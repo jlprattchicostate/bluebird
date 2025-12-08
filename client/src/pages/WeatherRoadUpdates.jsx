@@ -46,6 +46,21 @@ const WeatherRoadUpdates = () => {
       </header>
 
       <section className="panel">
+        <h2>Alerts & Notifications</h2>
+        {alertsLoading && <p>Loading alerts…</p>}
+        {alertsError && <p className="form-error">{alertsError.message}</p>}
+        {!alertsLoading && hazardAlerts.length === 0 && <p>No active system alerts.</p>}
+        <ul>
+          {hazardAlerts.map((notification) => (
+            <li key={notification.notification_id}>
+              <strong>{notification.type}</strong>: {notification.message}{' '}
+              <span>({new Date(notification.sent_at).toLocaleString()})</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="panel">
         <h2>Latest Weather Reports</h2>
         {isLoading && <p>Loading reports…</p>}
         {error && <p className="form-error">{error.message}</p>}
@@ -90,21 +105,6 @@ const WeatherRoadUpdates = () => {
             </article>
           ))}
         </div>
-      </section>
-
-      <section className="panel">
-        <h2>Alerts &amp; Notifications</h2>
-        {alertsLoading && <p>Loading alerts…</p>}
-        {alertsError && <p className="form-error">{alertsError.message}</p>}
-        {!alertsLoading && hazardAlerts.length === 0 && <p>No active system alerts.</p>}
-        <ul>
-          {hazardAlerts.map((notification) => (
-            <li key={notification.notification_id}>
-              <strong>{notification.type}</strong>: {notification.message}{' '}
-              <span>({new Date(notification.sent_at).toLocaleString()})</span>
-            </li>
-          ))}
-        </ul>
       </section>
     </main>
   )
