@@ -141,6 +141,53 @@
   padding: 1rem;
 }
 
+.placeholder-grid .post-card {
+  position: relative;
+  padding-bottom: 3.2rem;
+}
+
+.post-like-meta {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  background: rgba(248, 250, 252, 0.95);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem 0.35rem 0.75rem;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+}
+
+.post-like-count {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.post-like-button {
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.25rem;
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+
+.post-like-button svg {
+  width: 20px;
+  height: 20px;
+  fill: #cbd5f5;
+}
+
+.post-like-button:hover {
+  transform: scale(1.08);
+}
+
+.post-like-button.is-liked svg {
+  fill: #ef4444;
+}
+
 .login-card {
   max-width: 420px;
   background: #fff;
