@@ -127,6 +127,169 @@
   margin-bottom: 0.4rem;
 }
 
+.notification-preferences {
+  margin-bottom: 0;
+}
+
+.notification-card {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #dce3f3;
+  background: #ffffff;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.notification-disabled-hint {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.notification-form fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-form legend {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.notification-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.channel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pref-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.pref-toggle input {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.pref-toggle-label {
+  display: block;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.pref-toggle-description {
+  display: block;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.pref-toggle-pill {
+  margin-left: auto;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: #e0e7ff;
+  color: #312e81;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.digest-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.digest-option {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.85rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.digest-option-label {
+  display: block;
+  font-weight: 600;
+}
+
+.digest-option-helper {
+  display: block;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.quiet-hours {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.quiet-hours label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.quiet-hours input {
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5f5;
+}
+
+.quiet-hours-helper {
+  margin-top: 0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.notification-actions {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-status {
+  margin: 0;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  border: none;
+  border-radius: 0.65rem;
+  padding: 0.65rem 1.2rem;
+  font-weight: 600;
+  background: #0f62fe;
+  color: #fff;
+  cursor: not-allowed;
+}
+
 .placeholder-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
