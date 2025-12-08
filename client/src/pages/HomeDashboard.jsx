@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useDashboardPreferences } from '../context/DashboardPreferencesContext'
 import useWeatherReports from '../hooks/useWeatherReports'
 import useResorts from '../hooks/useResorts'
 import useFavorites from '../hooks/useFavorites'
@@ -26,6 +27,7 @@ const HomeDashboard = () => {
     isLoading: notificationsLoading,
     error: notificationsError,
   } = useNotifications({ limit: 4 })
+  const { orderedWidgets } = useDashboardPreferences()
 
   const resortById = useMemo(() => {
     const map = {}
@@ -41,6 +43,117 @@ const HomeDashboard = () => {
     ['alert', 'system'].includes((notification.type || '').toLowerCase()),
   )
   const communityPosts = posts.slice(0, 3)
+  const activeWidgets = orderedWidgets.filter((widget) => widget.enabled)
+
+  const renderWidget = (widgetId) => {
+    switch (widgetId) {
+      case 'conditions':
+        return (
+          <section className="panel" key="widget-conditions">
+            <h2>Daily Conditions Digest</h2>
+            {weatherLoading && <p>Loading telemetry…</p>}
+            {weatherError && <p className="form-error">{weatherError.message}</p>}
+            {!weatherLoading && !weatherError && reports.length === 0 && (
+              <p>No weather reports yet.</p>
+            )}
+            <div className="placeholder-grid">
+              {reports.slice(0, 2).map((report, index) => (
+                <article key={report.weather_id}>
+                  <h3>{index === 0 ? 'Morning Snapshot' : 'Later Today'}</h3>
+                  <p>
+                    {resortById[report.resort_id]?.name ?? 'Unknown resort'} ·{' '}
+                    {resortById[report.resort_id]?.location ?? 'Location coming soon'}
+                  </p>
+                  <ul>
+                    <li>Snowfall: {report.snowfall ?? '—'} in</li>
+                    <li>Temp: {report.temperature ?? '—'}°F</li>
+                    <li>Wind: {report.wind_speed ?? '—'} mph</li>
+                  </ul>
+                  <p>Reported {new Date(report.report_time).toLocaleTimeString()}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )
+      case 'highlights':
+        return (
+          <section className="panel" key="widget-highlights">
+            <h2>Resort Highlights</h2>
+            {favLoading && user && <p>Loading your favorites…</p>}
+            {favError && <p className="form-error">{favError.message}</p>}
+            <div className="placeholder-grid">
+              {featuredResorts.map((resort) => (
+                <article key={resort.resort_id}>
+                  <h3>{resort.name}</h3>
+                  <p>{resort.location || 'Location TBD'}</p>
+                  <ul>
+                    <li>{resort.has_parking ? 'On-site parking' : 'Limited parking'}</li>
+                    <li>Added {new Date(resort.created_at).toLocaleDateString()}</li>
+                  </ul>
+                </article>
+              ))}
+              <article>
+                <h3>Alert Banner</h3>
+                {notificationsLoading && <p>Checking alerts…</p>}
+                {notificationsError && <p className="form-error">{notificationsError.message}</p>}
+                {!notificationsLoading && alertNotifications.length === 0 && <p>No active alerts.</p>}
+                <ul>
+                  {alertNotifications.map((notification) => (
+                    <li key={notification.notification_id}>
+                      <strong>{notification.type}</strong>: {notification.message}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </div>
+          </section>
+        )
+      case 'community':
+        return (
+          <section className="panel" key="widget-community">
+            <h2>Community Pulse</h2>
+            {postsLoading && <p>Loading community feed…</p>}
+            {postsError && <p className="form-error">{postsError.message}</p>}
+            {!postsLoading && !postsError && communityPosts.length === 0 && (
+              <p>No rider updates yet.</p>
+            )}
+            <div className="placeholder-grid">
+              {communityPosts.map((post) => (
+                <article key={post.post_id}>
+                  <h3>{post.caption || 'Untitled update'}</h3>
+                  <p>
+                    Resort: {resortById[post.resort_id]?.name ?? 'Unknown'}
+                    {resortById[post.resort_id]?.location ? (
+                      <span> · {resortById[post.resort_id].location}</span>
+                    ) : null}
+                  </p>
+                  <p>Vibe: {post.vibe_tag ?? 'n/a'}</p>
+                  <p>{new Date(post.created_at).toLocaleString()}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )
+      case 'notifications':
+        return (
+          <section className="panel" key="widget-notifications">
+            <h2>Priority Notifications</h2>
+            {notificationsLoading && <p>Fetching notifications…</p>}
+            {notificationsError && <p className="form-error">{notificationsError.message}</p>}
+            {!notificationsLoading && alertNotifications.length === 0 && <p>No critical alerts.</p>}
+            <ul>
+              {alertNotifications.map((notification) => (
+                <li key={notification.notification_id}>
+                  <strong>{notification.type}</strong>: {notification.message}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      default:
+        return null
+    }
+  }
 
   return (
     <main className="page" aria-labelledby="home-dashboard-title">
@@ -59,82 +172,18 @@ const HomeDashboard = () => {
         )}
       </header>
 
-      <section className="panel">
-        <h2>Daily Conditions Digest</h2>
-        {weatherLoading && <p>Loading telemetry…</p>}
-        {weatherError && <p className="form-error">{weatherError.message}</p>}
-        {!weatherLoading && !weatherError && reports.length === 0 && <p>No weather reports yet.</p>}
-        <div className="placeholder-grid">
-          {reports.slice(0, 2).map((report, index) => (
-            <article key={report.weather_id}>
-              <h3>{index === 0 ? 'Morning Snapshot' : 'Later Today'}</h3>
-              <p>
-                {resortById[report.resort_id]?.name ?? 'Unknown resort'} ·{' '}
-                {resortById[report.resort_id]?.location ?? 'Location coming soon'}
-              </p>
-              <ul>
-                <li>Snowfall: {report.snowfall ?? '—'} in</li>
-                <li>Temp: {report.temperature ?? '—'}°F</li>
-                <li>Wind: {report.wind_speed ?? '—'} mph</li>
-              </ul>
-              <p>Reported {new Date(report.report_time).toLocaleTimeString()}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel">
-        <h2>Resort Highlights</h2>
-        {favLoading && user && <p>Loading your favorites…</p>}
-        {favError && <p className="form-error">{favError.message}</p>}
-        <div className="placeholder-grid">
-          {featuredResorts.map((resort) => (
-            <article key={resort.resort_id}>
-              <h3>{resort.name}</h3>
-              <p>{resort.location || 'Location TBD'}</p>
-              <ul>
-                <li>{resort.has_parking ? 'On-site parking' : 'Limited parking'}</li>
-                <li>Added {new Date(resort.created_at).toLocaleDateString()}</li>
-              </ul>
-            </article>
-          ))}
-          <article>
-            <h3>Alert Banner</h3>
-            {notificationsLoading && <p>Checking alerts…</p>}
-            {notificationsError && <p className="form-error">{notificationsError.message}</p>}
-            {!notificationsLoading && alertNotifications.length === 0 && <p>No active alerts.</p>}
-            <ul>
-              {alertNotifications.map((notification) => (
-                <li key={notification.notification_id}>
-                  <strong>{notification.type}</strong>: {notification.message}
-                </li>
-              ))}
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section className="panel">
-        <h2>Community Pulse</h2>
-        {postsLoading && <p>Loading community feed…</p>}
-        {postsError && <p className="form-error">{postsError.message}</p>}
-        {!postsLoading && !postsError && communityPosts.length === 0 && <p>No rider updates yet.</p>}
-        <div className="placeholder-grid">
-          {communityPosts.map((post) => (
-            <article key={post.post_id}>
-              <h3>{post.caption || 'Untitled update'}</h3>
-              <p>
-                Resort: {resortById[post.resort_id]?.name ?? 'Unknown'}
-                {resortById[post.resort_id]?.location ? (
-                  <span> · {resortById[post.resort_id].location}</span>
-                ) : null}
-              </p>
-              <p>Vibe: {post.vibe_tag ?? 'n/a'}</p>
-              <p>{new Date(post.created_at).toLocaleString()}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      {activeWidgets.length === 0 ? (
+        <section className="panel">
+          <h2>Dashboard Widgets</h2>
+          <p>
+            No widgets are currently enabled. Visit your profile to turn modules back on and reorder
+            them.
+          </p>
+          <Link to="/profiles">Go to profile settings</Link>
+        </section>
+      ) : (
+        activeWidgets.map(({ id }) => renderWidget(id))
+      )}
     </main>
   )
 }
