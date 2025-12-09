@@ -13,7 +13,9 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.947.0",
     "@supabase/supabase-js": "^2.84.0",
+    "client-secrets-manager": "github:aws-sdk/client-secrets-manager",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -23,9 +25,11 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "pino": "^10.1.0",
-    "pino-pretty": "^13.1.2"
+    "pino-pretty": "^13.1.2",
+    "serverless-http": "^4.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "serverless-offline": "^14.4.0"
   }
 }
