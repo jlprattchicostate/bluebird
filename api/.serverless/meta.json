@@ -1,0 +1,759 @@
+{
+  "C:\\Users\\Jeff\\CascadeProjects\\bluebird\\api\\serverless.yml": {
+    "versionFramework": "4.27.1",
+    "servicePath": "C:\\Users\\Jeff\\CascadeProjects\\bluebird\\api\\serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "bluebird-api",
+      "frameworkVersion": "4",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs20.x",
+        "region": "us-west-1",
+        "memorySize": 512,
+        "timeout": 30,
+        "httpApi": {
+          "cors": {
+            "allowedOrigins": [
+              "https://main.d1jaxwhav3ibk1.amplifyapp.com",
+              "http://localhost:5173"
+            ],
+            "allowedMethods": [
+              "ANY",
+              "OPTIONS"
+            ]
+          }
+        },
+        "environment": {
+          "SECRETS_ID": "<REDACTED>"
+        },
+        "iam": {
+          "role": {
+            "statements": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "secretsmanager:GetSecretValue"
+                ],
+                "Resource": "arn:aws:secretsmanager:us-west-1:488707164511:secret:bluebird/api/prod-NFp8BA"
+              }
+            ]
+          }
+        },
+        "stage": "dev",
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "ApiLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/bluebird-api-dev-api"
+              }
+            },
+            "IamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "bluebird-api",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:TagResource"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bluebird-api-dev*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bluebird-api-dev*:*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "secretsmanager:GetSecretValue"
+                          ],
+                          "Resource": "arn:aws:secretsmanager:us-west-1:488707164511:secret:bluebird/api/prod-NFp8BA"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "bluebird-api",
+                      "dev",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                }
+              }
+            },
+            "ApiLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-west-1-cf10b3f4-4c17",
+                  "S3Key": "serverless/bluebird-api/dev/1765306146950-2025-12-09T18:49:06.950Z/bluebird-api.zip"
+                },
+                "Handler": "src/lambda.handler",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "bluebird-api-dev-api",
+                "MemorySize": 512,
+                "Timeout": 30,
+                "Environment": {
+                  "Variables": {
+                    "SECRETS_ID": "<REDACTED>"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "ApiLogGroup"
+              ]
+            },
+            "ApiLambdaVersion45R3f7USDh7v4XHw83TtnFtGsO9HfFPgKiOp2Y9iWc": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "ApiLambdaFunction"
+                },
+                "CodeSha256": "KvxzazwhHnuu7PxJvZfIehDsUpMaHdunBq1ii5b7tSk="
+              }
+            },
+            "HttpApi": {
+              "Type": "AWS::ApiGatewayV2::Api",
+              "Properties": {
+                "Name": "dev-bluebird-api",
+                "ProtocolType": "HTTP",
+                "CorsConfiguration": {
+                  "AllowCredentials": "<REDACTED>",
+                  "AllowHeaders": [
+                    "Content-Type",
+                    "X-Amz-Date",
+                    "Authorization",
+                    "X-Api-Key",
+                    "X-Amz-Security-Token",
+                    "X-Amz-User-Agent",
+                    "X-Amzn-Trace-Id"
+                  ],
+                  "AllowMethods": [
+                    "ANY",
+                    "OPTIONS"
+                  ],
+                  "AllowOrigins": [
+                    "https://main.d1jaxwhav3ibk1.amplifyapp.com",
+                    "http://localhost:5173"
+                  ]
+                }
+              }
+            },
+            "HttpApiStage": {
+              "Type": "AWS::ApiGatewayV2::Stage",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "StageName": "$default",
+                "AutoDeploy": true,
+                "DefaultRouteSettings": {
+                  "DetailedMetricsEnabled": false
+                }
+              }
+            },
+            "ApiLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "ApiLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationApi": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "ApiLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRouteAnyProxyVar": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "ANY /{proxy+}",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationApi"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationApi"
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-us-west-1-cf10b3f4-4c17",
+              "Export": {
+                "Name": "sls-bluebird-api-dev-ServerlessDeploymentBucketName"
+              }
+            },
+            "ApiLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "ApiLambdaVersion45R3f7USDh7v4XHw83TtnFtGsO9HfFPgKiOp2Y9iWc"
+              },
+              "Export": {
+                "Name": "sls-bluebird-api-dev-ApiLambdaFunctionQualifiedArn"
+              }
+            },
+            "HttpApiId": {
+              "Description": "Id of the HTTP API",
+              "Value": {
+                "Ref": "HttpApi"
+              },
+              "Export": {
+                "Name": "sls-bluebird-api-dev-HttpApiId"
+              }
+            },
+            "HttpApiUrl": {
+              "Description": "URL of the HTTP API",
+              "Value": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    ".execute-api.",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ".",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    }
+                  ]
+                ]
+              },
+              "Export": {
+                "Name": "sls-bluebird-api-dev-HttpApiUrl"
+              }
+            }
+          }
+        },
+        "vpc": {}
+      },
+      "functions": {
+        "api": {
+          "handler": "src/lambda.handler",
+          "events": [
+            {
+              "httpApi": {
+                "method": "ANY",
+                "path": "/{proxy+}"
+              },
+              "resolvedMethod": "ANY",
+              "resolvedPath": "/{proxy+}"
+            }
+          ],
+          "name": "bluebird-api-dev-api",
+          "package": {},
+          "memory": 512,
+          "timeout": 30,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "ApiLambdaVersion45R3f7USDh7v4XHw83TtnFtGsO9HfFPgKiOp2Y9iWc"
+        }
+      },
+      "plugins": [
+        "serverless-offline"
+      ],
+      "package": {
+        "patterns": [
+          "!**",
+          "src/**",
+          "package.json",
+          "package-lock.json",
+          "../docs/openapi.yaml"
+        ],
+        "artifactsS3KeyDirname": "serverless/bluebird-api/dev/code-artifacts",
+        "deploymentBucket": "serverless-framework-deployments-us-west-1-cf10b3f4-4c17",
+        "artifact": "C:\\Users\\Jeff\\CascadeProjects\\bluebird\\api\\.serverless\\bluebird-api.zip",
+        "artifactDirectoryName": "serverless/bluebird-api/dev/1765306146950-2025-12-09T18:49:06.950Z"
+      },
+      "custom": {
+        "secretsId": "<REDACTED>"
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs20.x",
+      "region": "us-west-1",
+      "memorySize": 512,
+      "timeout": 30,
+      "httpApi": {
+        "cors": {
+          "allowedOrigins": [
+            "https://main.d1jaxwhav3ibk1.amplifyapp.com",
+            "http://localhost:5173"
+          ],
+          "allowedMethods": [
+            "ANY",
+            "OPTIONS"
+          ]
+        }
+      },
+      "environment": {
+        "SECRETS_ID": "<REDACTED>"
+      },
+      "iam": {
+        "role": {
+          "statements": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "secretsmanager:GetSecretValue"
+              ],
+              "Resource": "arn:aws:secretsmanager:us-west-1:488707164511:secret:bluebird/api/prod-NFp8BA"
+            }
+          ]
+        }
+      },
+      "stage": "dev",
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ApiLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/bluebird-api-dev-api"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "bluebird-api",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:TagResource"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bluebird-api-dev*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bluebird-api-dev*:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "secretsmanager:GetSecretValue"
+                        ],
+                        "Resource": "arn:aws:secretsmanager:us-west-1:488707164511:secret:bluebird/api/prod-NFp8BA"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "bluebird-api",
+                    "dev",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "ApiLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-west-1-cf10b3f4-4c17",
+                "S3Key": "serverless/bluebird-api/dev/1765306146950-2025-12-09T18:49:06.950Z/bluebird-api.zip"
+              },
+              "Handler": "src/lambda.handler",
+              "Runtime": "nodejs20.x",
+              "FunctionName": "bluebird-api-dev-api",
+              "MemorySize": 512,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "SECRETS_ID": "<REDACTED>"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "ApiLogGroup"
+            ]
+          },
+          "ApiLambdaVersion45R3f7USDh7v4XHw83TtnFtGsO9HfFPgKiOp2Y9iWc": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ApiLambdaFunction"
+              },
+              "CodeSha256": "KvxzazwhHnuu7PxJvZfIehDsUpMaHdunBq1ii5b7tSk="
+            }
+          },
+          "HttpApi": {
+            "Type": "AWS::ApiGatewayV2::Api",
+            "Properties": {
+              "Name": "dev-bluebird-api",
+              "ProtocolType": "HTTP",
+              "CorsConfiguration": {
+                "AllowCredentials": "<REDACTED>",
+                "AllowHeaders": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "AllowMethods": [
+                  "ANY",
+                  "OPTIONS"
+                ],
+                "AllowOrigins": [
+                  "https://main.d1jaxwhav3ibk1.amplifyapp.com",
+                  "http://localhost:5173"
+                ]
+              }
+            }
+          },
+          "HttpApiStage": {
+            "Type": "AWS::ApiGatewayV2::Stage",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "StageName": "$default",
+              "AutoDeploy": true,
+              "DefaultRouteSettings": {
+                "DetailedMetricsEnabled": false
+              }
+            }
+          },
+          "ApiLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ApiLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationApi": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "ApiLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteAnyProxyVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "ANY /{proxy+}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationApi"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationApi"
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-west-1-cf10b3f4-4c17",
+            "Export": {
+              "Name": "sls-bluebird-api-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "ApiLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ApiLambdaVersion45R3f7USDh7v4XHw83TtnFtGsO9HfFPgKiOp2Y9iWc"
+            },
+            "Export": {
+              "Name": "sls-bluebird-api-dev-ApiLambdaFunctionQualifiedArn"
+            }
+          },
+          "HttpApiId": {
+            "Description": "Id of the HTTP API",
+            "Value": {
+              "Ref": "HttpApi"
+            },
+            "Export": {
+              "Name": "sls-bluebird-api-dev-HttpApiId"
+            }
+          },
+          "HttpApiUrl": {
+            "Description": "URL of the HTTP API",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  }
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-bluebird-api-dev-HttpApiUrl"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "error": {
+      "message": "An error occurred: HttpApi - Resource handler returned message: \"Method ANY is not supported (Service: AmazonApiGatewayV2; Status Code: 400; Error Code: BadRequestException; Request ID: a5fea1b9-7a9f-4df8-a04f-d49040cf7cc0; Proxy: null)\" (RequestToken: 2578569c-b951-0714-b119-8d86bfb1c0e1, HandlerErrorCode: GeneralServiceException).",
+      "stack": "ServerlessError2: An error occurred: HttpApi - Resource handler returned message: \"Method ANY is not supported (Service: AmazonApiGatewayV2; Status Code: 400; Error Code: BadRequestException; Request ID: a5fea1b9-7a9f-4df8-a04f-d49040cf7cc0; Proxy: null)\" (RequestToken: 2578569c-b951-0714-b119-8d86bfb1c0e1, HandlerErrorCode: GeneralServiceException).\n    at file:///C:/Users/Jeff/.serverless/releases/4.27.1/package/dist/sf-core.js:1096:828\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async AwsDeploy.createFallback (file:///C:/Users/Jeff/.serverless/releases/4.27.1/package/dist/sf-core.js:1096:23536)\n    at async aws:deploy:deploy:updateStack (file:///C:/Users/Jeff/.serverless/releases/4.27.1/package/dist/sf-core.js:1107:8004)\n    at async PluginManager.runHooks (file:///C:/Users/Jeff/.serverless/releases/4.27.1/package/dist/sf-core.js:1372:11105)\n    at async PluginManager.invoke (file:///C:/Users/Jeff/.serverless/releases/4.27.1/package/dist/sf-core.js:1372:11874)\n    at async PluginManager.spawn (file:///C:/Users/Jeff/.serverless/releases/4.27.1/package/dist/sf-core.js:1372:12236)\n    at async PluginManager.runHooks (file:///C:/Users/Jeff/.serverless/releases/4.27.1/package/dist/sf-core.js:1372:11105)\n    at async PluginManager.invoke (file:///C:/Users/Jeff/.serverless/releases/4.27.1/package/dist/sf-core.js:1372:11874)\n    at async PluginManager.run (file:///C:/Users/Jeff/.serverless/releases/4.27.1/package/dist/sf-core.js:1372:12607)",
+      "code": "AWS_CLOUD_FORMATION_CREATE_STACK_INTERNAL_API_GATEWAY_V2_API_CREATE_FAILED"
+    },
+    "serviceRawFile": "service: bluebird-api\r\nframeworkVersion: \"4\"\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs20.x\r\n  region: us-west-1\r\n  memorySize: 512\r\n  timeout: 30\r\n  httpApi:\r\n    cors:\r\n      allowedOrigins:\r\n        - https://main.d1jaxwhav3ibk1.amplifyapp.com\r\n        - http://localhost:5173\r\n      allowedMethods:\r\n        - ANY\r\n        - OPTIONS\r\n  environment:\r\n    SECRETS_ID: ${self:custom.secretsId}\r\n  iam:\r\n    role:\r\n      statements:\r\n        - Effect: Allow\r\n          Action:\r\n            - secretsmanager:GetSecretValue\r\n          Resource: ${self:custom.secretsId}\r\n\r\nfunctions:\r\n  api:\r\n    handler: src/lambda.handler\r\n    events:\r\n      - httpApi:\r\n          method: ANY\r\n          path: /{proxy+}\r\n\r\nplugins:\r\n  - serverless-offline\r\n\r\npackage:\r\n  patterns:\r\n    - '!**'\r\n    - src/**\r\n    - package.json\r\n    - package-lock.json\r\n    - ../docs/openapi.yaml\r\n\r\ncustom:\r\n  secretsId: ${env:SECRETS_ID}\r\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {},
+    "orgId": "0db093fd-d120-4bc8-b530-8c00df1df137",
+    "orgName": "bluebirdorg",
+    "userId": "SRKlK93JgK0hH2JRLc",
+    "userName": "bluebirdorg",
+    "serviceProviderAwsAccountId": "488707164511",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}

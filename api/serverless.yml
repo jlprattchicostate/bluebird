@@ -13,8 +13,13 @@ provider:
         - https://main.d1jaxwhav3ibk1.amplifyapp.com
         - http://localhost:5173
       allowedMethods:
-        - ANY
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
         - OPTIONS
+        - HEAD
   environment:
     SECRETS_ID: ${self:custom.secretsId}
   iam:
@@ -30,7 +35,25 @@ functions:
     handler: src/lambda.handler
     events:
       - httpApi:
-          method: ANY
+          method: GET
+          path: /{proxy+}
+      - httpApi:
+          method: POST
+          path: /{proxy+}
+      - httpApi:
+          method: PUT
+          path: /{proxy+}
+      - httpApi:
+          method: PATCH
+          path: /{proxy+}
+      - httpApi:
+          method: DELETE
+          path: /{proxy+}
+      - httpApi:
+          method: HEAD
+          path: /{proxy+}
+      - httpApi:
+          method: OPTIONS
           path: /{proxy+}
 
 plugins:
