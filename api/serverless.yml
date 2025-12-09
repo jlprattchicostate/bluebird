@@ -1,0 +1,48 @@
+service: bluebird-api
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-west-1
+  memorySize: 512
+  timeout: 30
+  httpApi:
+    cors:
+      allowedOrigins:
+        - https://main.d1jaxwhav3ibk1.amplifyapp.com
+        - http://localhost:5173
+      allowedMethods:
+        - ANY
+        - OPTIONS
+  environment:
+    SECRETS_ID: ${self:custom.secretsId}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource: ${self:custom.secretsId}
+
+functions:
+  api:
+    handler: src/lambda.handler
+    events:
+      - httpApi:
+          method: ANY
+          path: /{proxy+}
+
+plugins:
+  - serverless-offline
+
+package:
+  patterns:
+    - '!**'
+    - src/**
+    - package.json
+    - package-lock.json
+    - ../docs/openapi.yaml
+
+custom:
+  secretsId: ${env:SECRETS_ID}
