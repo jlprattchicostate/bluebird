@@ -141,7 +141,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-us-west-1-cf10b3f4-4c17",
-                "S3Key": "serverless/bluebird-api/dev/1765306783252-2025-12-09T18:59:43.252Z/bluebird-api.zip"
+                "S3Key": "serverless/bluebird-api/dev/1765330612601-2025-12-10T01:36:52.601Z/bluebird-api.zip"
               },
               "Handler": "src/lambda.handler",
               "Runtime": "nodejs20.x",
@@ -164,14 +164,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersion45R3f7USDh7v4XHw83TtnFtGsO9HfFPgKiOp2Y9iWc": {
+          "ApiLambdaVersion79DIZ8S64sezCuXXiAzF0SnCrtRg3rfukOqUs4gHN4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "KvxzazwhHnuu7PxJvZfIehDsUpMaHdunBq1ii5b7tSk="
+              "CodeSha256": "ZNMQyHOS9O4uQbUxX8ZmGrnVkVjg9gVo5phcyMfyx2Q="
             }
           },
           "HttpApi": {
@@ -427,7 +427,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersion45R3f7USDh7v4XHw83TtnFtGsO9HfFPgKiOp2Y9iWc"
+              "Ref": "ApiLambdaVersion79DIZ8S64sezCuXXiAzF0SnCrtRg3rfukOqUs4gHN4"
             },
             "Export": {
               "Name": "sls-bluebird-api-dev-ApiLambdaFunctionQualifiedArn"
@@ -545,7 +545,7 @@
         "timeout": 30,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersion45R3f7USDh7v4XHw83TtnFtGsO9HfFPgKiOp2Y9iWc"
+        "versionLogicalId": "ApiLambdaVersion79DIZ8S64sezCuXXiAzF0SnCrtRg3rfukOqUs4gHN4"
       }
     },
     "configValidationMode": "warn",
@@ -573,7 +573,7 @@
         "artifactsS3KeyDirname": "serverless/bluebird-api/dev/code-artifacts",
         "deploymentBucket": "serverless-framework-deployments-us-west-1-cf10b3f4-4c17",
         "artifact": "C:\\Users\\Jeff\\CascadeProjects\\bluebird\\api\\.serverless\\bluebird-api.zip",
-        "artifactDirectoryName": "serverless/bluebird-api/dev/1765306783252-2025-12-09T18:59:43.252Z"
+        "artifactDirectoryName": "serverless/bluebird-api/dev/1765330612601-2025-12-10T01:36:52.601Z"
       },
       "custom": {
         "$ref": "$[\"service\"][\"custom\"]"
@@ -585,7 +585,7 @@
     "artifact": "C:\\Users\\Jeff\\CascadeProjects\\bluebird\\api\\.serverless\\bluebird-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/bluebird-api/dev/1765306783252-2025-12-09T18:59:43.252Z",
+    "artifactDirectoryName": "serverless/bluebird-api/dev/1765330612601-2025-12-10T01:36:52.601Z",
     "artifact": "bluebird-api.zip"
   }
 }

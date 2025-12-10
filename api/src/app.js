@@ -27,11 +27,19 @@ app.use(
   })
 );
 
-app.get('/api/v1/health', (_req, res) => {
+const basePaths = Array.from(
+  new Set([config.apiBasePath || '/api/v1', '/api/v1'])
+).filter(Boolean);
+
+if (!basePaths.includes('/')) {
+  basePaths.push('/');
+}
+
+app.get(['/api/v1/health', '/health'], (_req, res) => {
   res.json({ status: 'ok', service: 'bluebird-api', env: config.env });
 });
 
-app.use('/api/v1', auth, routes);
+app.use(['/api/v1', '/'], auth, routes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
