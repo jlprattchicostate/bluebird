@@ -141,7 +141,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-us-west-1-cf10b3f4-4c17",
-                "S3Key": "serverless/bluebird-api/dev/1765334156658-2025-12-10T02:35:56.658Z/bluebird-api.zip"
+                "S3Key": "serverless/bluebird-api/dev/1765336993398-2025-12-10T03:23:13.398Z/bluebird-api.zip"
               },
               "Handler": "src/lambda.handler",
               "Runtime": "nodejs20.x",
@@ -164,14 +164,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionYiIq5AvKB8miufrRwjYNY2ciVAtffSItjnoBDNenvps": {
+          "ApiLambdaVersionGOv7hqRk9nJ0mHITzhzdaVDUR7DH91QgliSk0jRU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "KKRWPsT8JRG5FZ8hXAS+DGgiirik10J8RtbRiDu6WOw="
+              "CodeSha256": "SQS/odERR8jwaoq2zxps23nhgi/LFUaWa2eZbB0CKF0="
             }
           },
           "HttpApi": {
@@ -427,7 +427,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionYiIq5AvKB8miufrRwjYNY2ciVAtffSItjnoBDNenvps"
+              "Ref": "ApiLambdaVersionGOv7hqRk9nJ0mHITzhzdaVDUR7DH91QgliSk0jRU"
             },
             "Export": {
               "Name": "sls-bluebird-api-dev-ApiLambdaFunctionQualifiedArn"
@@ -545,7 +545,7 @@
         "timeout": 30,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionYiIq5AvKB8miufrRwjYNY2ciVAtffSItjnoBDNenvps"
+        "versionLogicalId": "ApiLambdaVersionGOv7hqRk9nJ0mHITzhzdaVDUR7DH91QgliSk0jRU"
       }
     },
     "configValidationMode": "warn",
@@ -568,12 +568,15 @@
           "src/**",
           "package.json",
           "package-lock.json",
+          "node_modules/**",
+          "!node_modules/.bin/**",
+          "!node_modules/aws-sdk/**",
           "../docs/openapi.yaml"
         ],
         "artifactsS3KeyDirname": "serverless/bluebird-api/dev/code-artifacts",
         "deploymentBucket": "serverless-framework-deployments-us-west-1-cf10b3f4-4c17",
         "artifact": "C:\\Users\\Jeff\\CascadeProjects\\bluebird\\api\\.serverless\\bluebird-api.zip",
-        "artifactDirectoryName": "serverless/bluebird-api/dev/1765334156658-2025-12-10T02:35:56.658Z"
+        "artifactDirectoryName": "serverless/bluebird-api/dev/1765336993398-2025-12-10T03:23:13.398Z"
       },
       "custom": {
         "$ref": "$[\"service\"][\"custom\"]"
@@ -585,7 +588,7 @@
     "artifact": "C:\\Users\\Jeff\\CascadeProjects\\bluebird\\api\\.serverless\\bluebird-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/bluebird-api/dev/1765334156658-2025-12-10T02:35:56.658Z",
+    "artifactDirectoryName": "serverless/bluebird-api/dev/1765336993398-2025-12-10T03:23:13.398Z",
     "artifact": "bluebird-api.zip"
   }
 }
