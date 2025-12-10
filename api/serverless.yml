@@ -65,6 +65,9 @@ package:
     - src/**
     - package.json
     - package-lock.json
+    - node_modules/**
+    - '!node_modules/.bin/**'
+    - '!node_modules/aws-sdk/**'
     - ../docs/openapi.yaml
 
 custom:
